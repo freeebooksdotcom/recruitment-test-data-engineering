@@ -1,15 +1,10 @@
-# Code test for data engineering candidates
+# Technical assessment for data engineering candidates 
 
 ## Purpose
 
-This test is designed to showcase your understanding of databases and data processing, together with your aptitude in a programming language of your choice.
+This has been adapted from this assessment: https://github.com/findmypast/recruitment-test-data-engineering
 
-There are two stages to this code test:
-
-1. Preparing code at home ahead of your interview.
-2. Pairing with us at the interview, making additions to your code.
-
-The pairing phase is to give us an indication of what it will be like to work together, and should be regarded as a collaborative effort.
+It has been designed to showcase your understanding of databases and data processing, together with your aptitude in a programming language of your choice.
 
 ## Prerequisites
 
@@ -59,13 +54,6 @@ Details of how to run and connect to the database are below, together with how t
 - All data input, storage, and output should be in UTF-8. Expect multi-byte characters in the data.
 - The MySQL database storage is ephemeral; it will not persist, so make sure all schema and data queries are repeatable.
 - You may find it easier to work with a subset of the data when developing your ingest.
-
-## Pairing activity at your interview
-
-We will spend 90 minutes at your interview pairing with you. This will include:
-
-- Looking at your current code and solution.
-- Modifying your output code, to add several new output files containing different subsets of the data. Be prepared to make different queries of the database, to manipulate data in your programme code, and to output data to disk as JSON and CSV files.
 
 ## Notes on using the images in the git repo
 

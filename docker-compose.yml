@@ -15,6 +15,13 @@ services:
       - "3306:3306"
     restart: always
 
+  answer-python:
+    image: answer-python
+    build: images/answer-python
+    command: ["./answer.py"]
+    volumes:
+      - ./data:/data
+
   example-c:
     image: example-c
     build: images/example-c
