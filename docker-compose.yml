@@ -14,10 +14,17 @@ services:
       - "3306:3306"
     restart: always
 
-  answer-python:
-    image: answer-python
-    build: images/answer-python
-    command: ["./answer.py"]
+  answer-loaddata-python:
+    image: answer-loaddata-python
+    build: images/answer-loaddata-python
+    command: ["./answer-loaddata.py"]
+    volumes:
+      - ./data:/data
+
+  answer-summarizedata-python:
+    image: answer-summarizedata-python
+    build: images/answer-summarizedata-python
+    command: ["./answer-summarizedata.py"]
     volumes:
       - ./data:/data
 

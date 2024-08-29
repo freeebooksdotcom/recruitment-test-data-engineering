@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import csv
 import json
 import sqlalchemy as sa
 
@@ -14,25 +13,8 @@ metadata = sa.schema.MetaData(engine)
 People = sa.schema.Table('people', metadata, autoload=True, autoload_with=engine)
 Places = sa.schema.Table('places', metadata, autoload=True, autoload_with=engine)
 
-# read the CSV data file into the table
-with open('/data/people.csv') as csv_file:
-  reader = csv.reader(csv_file)
-  next(reader)
-  for row in reader: 
-    connection.execute(People.insert().values(
-      given_name = row[0], family_name = row[1], date_of_birth = row[2], place_of_birth = row[3]))
-
-
-with open('/data/places.csv') as csv_file:
-  reader = csv.reader(csv_file)
-  next(reader)
-  for row in reader: 
-    connection.execute(Places.insert().values(
-      city = row[0], county = row[1], country = row[2]))
-
-
-# reference query for sqlalchemy functions below, unused in script   
-ref_query = """
+# reference query for functions below, (unused str)
+"""
 select country, 
 count(distinct(concat(given_name,family_name,date_of_birth)))
 from people
@@ -44,19 +26,25 @@ order by 2 desc
 
 # output the table to a JSON file
 with open('/data/summary_output.json', 'w') as json_file:
+
+# inner join of query
   j = sa.join(Places, People,
          People.c.place_of_birth== Places.c.city)
 
-# concat w/ birthdate in case same named persons  
+# concat full name w/ birthdate in case of same named persons  
   concat = sa.func.concat(People.c.given_name,
                           People.c.family_name,
                           People.c.date_of_birth)
   
-# distinct in case of duplicate entries
+# count distinct col in case of duplicate entries
   count_col = sa.func.count(concat.distinct())
+
+# query and execution
   stmt = sa.select(Places.c.country,count_col)\
     .select_from(j).group_by(Places.c.country)\
     .order_by(count_col.desc())
   rows = connection.execute(stmt).fetchall()
+
+# JSON output
   rows = {row[0]: row[1] for row in rows}
   json.dump(rows, json_file, separators=(',', ':'))
