@@ -2,7 +2,7 @@ drop table if exists places;
 
 create table `places` (
   `id` int not null auto_increment,
-  `city` varchar(80) not null,
+  `city` varchar(80) default null,
   `county` varchar(80) default null,
   `country` varchar(80) default null,
   primary key (`id`)

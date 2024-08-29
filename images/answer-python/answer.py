@@ -13,8 +13,8 @@ metadata = sa.schema.MetaData(engine)
 # make an ORM object to refer to the table
 People = sa.schema.Table('people', metadata, autoload=True, autoload_with=engine)
 Places = sa.schema.Table('places', metadata, autoload=True, autoload_with=engine)
-# read the CSV data file into the table
 
+# read the CSV data file into the table
 with open('/data/people.csv') as csv_file:
   reader = csv.reader(csv_file)
   next(reader)
@@ -30,23 +30,33 @@ with open('/data/places.csv') as csv_file:
     connection.execute(Places.insert().values(
       city = row[0], county = row[1], country = row[2]))
 
-# output the table to a JSON file
-# reference query for sql alchemy   
-query = """
-select country, count(distinct(concat(given_name,family_name,date_of_birth)))
+
+# reference query for sqlalchemy functions below, unused in script   
+ref_query = """
+select country, 
+count(distinct(concat(given_name,family_name,date_of_birth)))
 from people
 join places
 on city = place_of_birth
 group by 1
-order by 1
+order by 2 desc
 """
 
+# output the table to a JSON file
 with open('/data/summary_output.json', 'w') as json_file:
   j = sa.join(Places, People,
          People.c.place_of_birth== Places.c.city)
+
+# concat w/ birthdate in case same named persons  
+  concat = sa.func.concat(People.c.given_name,
+                          People.c.family_name,
+                          People.c.date_of_birth)
   
-  concat = sa.func.concat(People.c.given_name,People.c.family_name,People.c.date_of_birth)
-  stmt = sa.select(Places.c.country,sa.func.count(concat)).select_from(j).group_by(Places.c.country)
+# distinct in case of duplicate entries
+  count_col = sa.func.count(concat.distinct())
+  stmt = sa.select(Places.c.country,count_col)\
+    .select_from(j).group_by(Places.c.country)\
+    .order_by(count_col.desc())
   rows = connection.execute(stmt).fetchall()
   rows = {row[0]: row[1] for row in rows}
   json.dump(rows, json_file, separators=(',', ':'))
